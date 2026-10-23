@@ -1,0 +1,1 @@
+Windows is a trademark of Microsoft Corporation. This independent educational simulator is not affiliated with or endorsed by Microsoft. UI assets in this project are original SVG recreations inspired by modern Windows/Fluent visual language and are provided solely as part of this educational prototype.
