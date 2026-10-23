@@ -2,11 +2,11 @@ import http from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import os from 'node:os';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, 'public');
 const port = Number(process.env.PORT || 5173);
-const host = process.env.HOST || '0.0.0.0';
 
 const mime = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
@@ -40,6 +40,21 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(port, host, () => {
-  console.log(`Windows Simulator V2.1 running at http://localhost:${port}`);
+// Không truyền '0.0.0.0' để Node.js tự động lắng nghe cả IPv4 và IPv6 (giúp truy cập qua hostname không bị lỗi)
+server.listen(port, () => {
+  const hostname = os.hostname().toLowerCase();
+  console.log(`=== Windows Simulator V2.1 đang chạy ===`);
+  console.log(`- Trên máy GV:       http://localhost:${port}`);
+  console.log(`- Qua tên máy (1):   http://${hostname}:${port}`);
+  console.log(`- Qua tên máy (2):   http://${hostname}.local:${port}`);
+
+  // Tự động tìm và in ra địa chỉ IP LAN của máy GV
+  const nets = os.networkInterfaces();
+  for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+      if (net.family === 'IPv4' && !net.internal) {
+        console.log(`- Qua IP LAN (${name}): http://${net.address}:${port}`);
+      }
+    }
+  }
 });

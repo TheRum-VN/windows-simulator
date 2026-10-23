@@ -36,6 +36,16 @@ Không cần `npm install`; dự án không phụ thuộc package ngoài.
 - Teacher Panel: `Ctrl + Shift + T`.
 - Dữ liệu thực hành lưu trong `localStorage`; không tác động file thật của máy.
 
+## Hệ thống 15 Bài luyện tập Thực hành Tệp & Thư mục (Quests Engine)
+
+Bộ máy thực hành chống gian lận đối chiếu trực tiếp trên Virtual File System (VFS) Tree, Window Manager State và Provenance Metadata (`nameHistory`, `copiedFrom`, `movedBy: 'drag'`, `restored: true`, `createdBy`):
+- **Phần A (Cơ bản - Bài 1 đến 5)**: Mở thư mục Hình ảnh, Tạo thư mục trong Học tập, Đổi tên "Thư mục mới" thành "Vở của em", Chuyển 2 bức ảnh vào Hình ảnh, Chuyển tệp video vào Video.
+- **Phần B (Trung bình - Bài 6 đến 10)**: Phân loại 8 tệp tin lộn xộn, Sao chép (Copy) ảnh giữ nguyên bản gốc, Kéo thả chuột (Drag & Drop) tệp vào Tài liệu, Xóa và Khôi phục (Restore) tệp từ Recycle Bin, Chuỗi thao tác tổng hợp (Tạo ➔ Đổi tên ➔ Phân loại).
+- **Phần C (Nâng cao - Bài 11 đến 15)**: Tổ chức cây thư mục đa cấp (Nested Folders), Soạn thảo văn bản với Notepad và lưu đúng thư mục, Tạo bản sao lưu (Backup) và đổi tên, Giải cứu tệp xóa nhầm & Dọn sạch Thùng rác, Thử thách Tổng hợp Cuối tuần (Master Challenge).
+- **Bảng nhiệm vụ nổi (Mission HUD)**: Có thể di chuyển khắp màn hình, thu nhỏ/mở rộng, checklist thời gian thực (tích xanh tự động), gợi ý chi tiết (💡), nút làm lại bài và chuyển bài tiếp theo.
+- **Màn hình Hoàn thành Xuất sắc**: Trao cúp vinh danh khi hoàn thành 15/15 bài kèm nút **Làm lại từ đầu (Reset All Progress)**.
+- **Tích hợp Teacher Panel (`Ctrl + Shift + T`)**: Giáo viên có thể bật/tắt chế độ luyện tập, chọn nhảy nhanh đến bất kỳ bài nào từ Bài 1 đến Bài 15 để trình chiếu giảng dạy.
+
 ## Cấu trúc icon V2.1
 
 ```text
