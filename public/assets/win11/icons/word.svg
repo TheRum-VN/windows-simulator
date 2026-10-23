@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="w11-word-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#185abd"/>
+      <stop offset="100%" stop-color="#0c3b82"/>
+    </linearGradient>
+    <linearGradient id="w11-page" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#287be0"/>
+      <stop offset="100%" stop-color="#1458b0"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <!-- Background document sheets -->
+  <rect x="20" y="8" width="36" height="48" rx="4" fill="url(#w11-page)" filter="url(#shadow)"/>
+  <rect x="26" y="16" width="22" height="4" rx="2" fill="#ffffff" opacity="0.6"/>
+  <rect x="26" y="24" width="24" height="4" rx="2" fill="#ffffff" opacity="0.6"/>
+  <rect x="26" y="32" width="20" height="4" rx="2" fill="#ffffff" opacity="0.6"/>
+  <rect x="26" y="40" width="16" height="4" rx="2" fill="#ffffff" opacity="0.6"/>
+  <!-- Front Word "W" tile -->
+  <rect x="8" y="14" width="36" height="36" rx="6" fill="url(#w11-word-bg)" filter="url(#shadow)"/>
+  <path d="M15 22h4.2l3.4 13.8L26 22h4l3.4 13.8L36.8 22H41l-5.2 20h-4.3L28 27.8 24.5 42h-4.3z" fill="#ffffff"/>
+</svg>

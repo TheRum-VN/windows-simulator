@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Windows 10 Flat Word Icon -->
+  <rect x="22" y="8" width="34" height="48" fill="#185abd"/>
+  <rect x="28" y="16" width="22" height="3" fill="#ffffff" opacity="0.75"/>
+  <rect x="28" y="24" width="22" height="3" fill="#ffffff" opacity="0.75"/>
+  <rect x="28" y="32" width="22" height="3" fill="#ffffff" opacity="0.75"/>
+  <rect x="28" y="40" width="16" height="3" fill="#ffffff" opacity="0.75"/>
+  <rect x="8" y="16" width="32" height="32" fill="#2b579a"/>
+  <path d="M14 23h3.8l3 12.5 3-12.5h3.6l3 12.5 3-12.5H34l-4.6 18h-3.9L22.5 28.2 19.5 41h-3.9z" fill="#ffffff"/>
+</svg>

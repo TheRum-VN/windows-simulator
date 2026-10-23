@@ -3,11 +3,12 @@ import {
   createBaseSystemNodes, makeNode, LEVELS, evaluateSimulationGoals,
   loadPracticeState, savePracticeState, resetAllPractice
 } from './practice-engine.js';
+import { wordMarkup, bindWord, WORD_TEMPLATES } from './word-app.js';
 
 const $ = (s, root = document) => root.querySelector(s);
 const $$ = (s, root = document) => [...root.querySelectorAll(s)];
 const ICON = (n, os) => `/assets/${os || state.os}/icons/${n}.svg`;
-const APP_ICON = { explorer: 'explorer', notepad: 'notepad', calculator: 'calculator', settings: 'settings' };
+const APP_ICON = { explorer: 'explorer', word: 'word', notepad: 'notepad', calculator: 'calculator', settings: 'settings' };
 const now = () => Date.now();
 const uid = (p = 'id') => `${p}-${crypto.randomUUID?.() || Math.random().toString(36).slice(2, 9)}`;
 const esc = s => String(s ?? '').replace(/[&<>'"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[c]));
@@ -281,6 +282,8 @@ function openNode(id) {
   if (!n) return;
   if (n.type === 'folder') {
     openApp('explorer', { folder: n.id });
+  } else if (n.fileType === 'doc' || /\.(docx?|doc)$/i.test(n.name)) {
+    openApp('word', { nodeId: n.id, title: n.name, content: n.content || '' });
   } else if (n.type === 'text' || n.type === 'file') {
     openApp('notepad', { nodeId: n.id, text: n.content || '' });
   }
@@ -294,7 +297,7 @@ function createNode(type, parent = state.activeParent, extra = {}) {
   if (!parentNode || parent === RECYCLE) return;
   
   const id = uid(type);
-  const defaultName = type === 'folder' ? 'New folder' : 'New Text Document.txt';
+  const defaultName = type === 'folder' ? 'New folder' : type === 'doc' ? 'Tài liệu Word mới.docx' : 'New Text Document.txt';
   const name = uniqueName(parent, extra.name || defaultName);
   const t = now();
   
@@ -303,8 +306,8 @@ function createNode(type, parent = state.activeParent, extra = {}) {
     name,
     originalName: name,
     nameHistory: [name],
-    type,
-    fileType: extra.fileType || (type === 'folder' ? 'folder' : 'text'),
+    type: type === 'doc' ? 'file' : type,
+    fileType: extra.fileType || (type === 'folder' ? 'folder' : type === 'doc' ? 'doc' : 'text'),
     parentId: parent,
     parent: parent,
     inTrash: false,
@@ -571,6 +574,7 @@ function openApp(app, data = {}) {
   const id = uid('win');
   const base = {
     explorer: [120, 70, 900, 580],
+    word: [90, 30, 990, 650],
     notepad: [165, 90, 720, 500],
     calculator: [360, 80, 345, 535],
     settings: [150, 65, 850, 590]
@@ -615,6 +619,7 @@ function openApp(app, data = {}) {
 
 function appTitle(app, data) {
   if (app === 'explorer') return node(data.folder)?.name || 'File Explorer';
+  if (app === 'word') return `${node(data.nodeId)?.name || data.title || 'Document1'} - Word`;
   if (app === 'notepad') return `${node(data.nodeId)?.name || 'Untitled'} - Notepad`;
   return app === 'calculator' ? 'Calculator' : app === 'settings' ? 'Settings' : app;
 }
@@ -700,6 +705,7 @@ function windowMarkup(w) {
 
 function appMarkup(w) {
   if (w.app === 'explorer') return explorerMarkup(w);
+  if (w.app === 'word') return wordMarkup(w, state);
   if (w.app === 'notepad') return notepadMarkup(w);
   if (w.app === 'calculator') return calculatorMarkup(w);
   if (w.app === 'settings') return settingsMarkup(w);
@@ -720,6 +726,7 @@ function bindWindow(w) {
   $('.resize-handle', el).addEventListener('pointerdown', e => startResizeWindow(e, w, el));
   
   if (w.app === 'explorer') bindExplorer(w, el);
+  if (w.app === 'word') bindWord(w, el, state, { node, uniqueName, now, uid, esc, notify, ICON, APP_ICON, openApp, closeWindow, renderWindows, renderDesktop, onStateChange, setSelection, state });
   if (w.app === 'notepad') bindNotepad(w, el);
   if (w.app === 'calculator') bindCalculator(w, el);
   if (w.app === 'settings') bindSettings(w, el);
@@ -1306,6 +1313,7 @@ function renderStart() {
       <div class="start-search"><img src="${ICON('search')}"><input placeholder="Type here to search"></div>
       <div class="start-section-head"><span>Pinned</span><button>All apps ›</button></div>
       <div class="pinned-grid">
+        ${startApp('word', 'Word', 'word')}
         ${startApp('explorer', 'File Explorer', 'explorer')}
         ${startApp('notepad', 'Notepad', 'notepad')}
         ${startApp('calculator', 'Calculator', 'calculator')}
@@ -1338,14 +1346,17 @@ function renderStart() {
     </div>
     <div class="win10-app-list">
       <div class="win10-group-title">Recently added</div>
+      ${win10App('word', 'Word', 'word')}
       ${win10App('explorer', 'File Explorer', 'explorer')}
       ${win10App('notepad', 'Notepad', 'notepad')}
       ${win10App('calculator', 'Calculator', 'calculator')}
       ${win10App('settings', 'Settings', 'settings')}
       <div class="win10-group-title">W</div>
+      ${win10App('word', 'Word', 'word')}
       ${win10App('explorer', 'Windows System', 'folder', ROOT)}
     </div>
     <div class="win10-tiles">
+      <button class="tile" data-app="word"><img src="${ICON('word')}"><span>Word</span></button>
       <button class="tile" data-app="explorer"><img src="${ICON('explorer')}"><span>File Explorer</span></button>
       <button class="tile" data-app="notepad"><img src="${ICON('notepad')}"><span>Notepad</span></button>
       <button class="tile" data-app="calculator"><img src="${ICON('calculator')}"><span>Calculator</span></button>
@@ -1406,11 +1417,12 @@ function renderSearch() {
 
   const q = state.searchQuery.toLowerCase().trim();
   const apps = [
+    ['word', 'Microsoft Word', 'word'],
     ['explorer', 'File Explorer', 'explorer'],
     ['notepad', 'Notepad', 'notepad'],
     ['calculator', 'Calculator', 'calculator'],
     ['settings', 'Settings', 'settings']
-  ].filter(a => !q || a[1].toLowerCase().includes(q));
+  ].filter(a => !q || a[1].toLowerCase().includes(q) || a[0].toLowerCase().includes(q) || (q.includes('doc') && a[0] === 'word'));
 
   const files = state.nodes.filter(n => !n.system && !n.inTrash && (!q || n.name.toLowerCase().includes(q))).slice(0, 8);
 
@@ -1496,6 +1508,7 @@ function showContext(x, y, area, targetId = null, windowId = null) {
       <div class="menu-item" data-menu="refresh"><span class="menu-icon">↻</span>Refresh</div>
       <div class="menu-sep"></div>
       <div class="menu-item" data-menu="new-folder"><span class="menu-icon">📁</span>New folder <span class="shortcut">Ctrl+Shift+N</span></div>
+      <div class="menu-item" data-menu="new-word"><span class="menu-icon">📄</span>Microsoft Word Document</div>
       <div class="menu-item" data-menu="new-text"><span class="menu-icon">▤</span>New Text Document</div>
       <div class="menu-item ${state.clipboard.mode ? '' : 'disabled'}" data-menu="paste"><span class="menu-icon">▤</span>Paste <span class="shortcut">Ctrl+V</span></div>
       <div class="menu-sep"></div>
@@ -1528,6 +1541,7 @@ function menuAction(a, targetId, windowId) {
   if (a === 'restore') restoreSelected();
   if (a === 'properties') showProperties(targetId);
   if (a === 'new-folder') createNode('folder', state.activeParent);
+  if (a === 'new-word') createNode('doc', state.activeParent, { name: 'Tài liệu Word mới.docx', fileType: 'doc' });
   if (a === 'new-text') createNode('text', state.activeParent);
   if (a === 'paste') pasteInto(state.activeParent);
   if (a === 'refresh') {
